@@ -1,0 +1,201 @@
+ 1. Introduction to DevOps Infrastructure
+DevOps focuses on automation, collaboration, and faster delivery of applications.
+It integrates development + operations to improve efficiency.
+Modern DevOps heavily uses containers, CI/CD, and cloud technologies.
+
+2. Problem with Traditional Systems
+Earlier: 1 application → 1 physical server
+Issues:
+Resource wastage
+High cost
+Poor scalability
+
+
+3. Virtualization
+Virtualization = running multiple virtual machines (VMs) on one physical machine.
+Managed by Hypervisor.
+✅ Advantages:
+Better hardware utilization
+Run different OS (Linux, Windows)
+Strong isolation
+❌ Drawbacks:
+Heavy resource usage
+Slow boot time
+Complex management
+High cost
+
+
+4. Containerization
+Containers are lightweight environments that share host OS.
+Only include application + required dependencies.
+✅ Advantages:
+Fast startup (seconds)
+Lightweight
+High scalability
+Portable across systems
+🔥 Key Idea:
+
+Containers solved problems of virtualization and enabled microservices.
+
+5. Container Runtime
+Software that runs containers.
+Functions:
+Create container
+Start/Stop container
+Manage lifecycle
+Types:
+High-Level Runtime
+Docker Engine
+containerd
+CRI-O
+Low-Level Runtime
+runc
+
+
+6. Process Isolation & Namespaces
+Containers use Linux namespaces for isolation.
+Types of Namespaces:
+PID Namespace
+Separate process IDs
+Each container starts from PID 1
+Network Namespace
+Each container has its own IP & ports
+Mount Namespace
+Separate filesystem
+UTS Namespace
+Separate hostname
+User Namespace
+Maps users for security
+🔥 Concept:
+
+Namespaces create illusion of separate system.
+
+7. Control Groups (cgroups)
+Used to limit and control resources.
+Controls:
+CPU
+Memory
+Disk I/O
+Importance:
+Prevent one container from using all resources
+🔥 Concept:
+
+Namespaces isolate, cgroups control.
+
+
+8. Container Image
+A container image is:
+Read-only
+Contains app + dependencies
+Example:
+python:3.11-slim
+
+
+9. Image Layers
+Images are built using multiple layers.
+Features:
+Immutable
+Cached
+Reusable
+Benefits:
+Faster build
+Less storage
+Faster deployment
+
+
+10. Image Registry
+Stores and distributes container images.
+Purpose:
+Share images
+Version control
+Enable CI/CD
+Types:
+Public Registry
+Free, open access
+Example: Docker Hub
+Private Registry
+Secure, enterprise use
+Example: AWS ECR, GHCR
+
+
+11. Image Naming Format
+<registry>/<namespace>/<image>:<tag>
+Example:
+docker.io/user/app:v1
+
+
+12. Image Distribution Process
+Build image
+Push to registry
+Pull from registry
+Run container
+
+
+13. Docker Introduction
+Docker is a containerization platform.
+Components:
+Docker Client
+Docker Daemon
+Images
+Containers
+Registry
+
+
+14. Docker Lifecycle
+Build → Create image
+Ship → Push to registry
+Run → Start container
+
+
+15. Basic Docker Commands
+📌 Image Commands:
+docker pull ubuntu
+docker images
+docker rmi ubuntu
+📌 Container Commands:
+docker run ubuntu
+docker run -it ubuntu /bin/bash
+docker stop <id>
+docker rm <id>
+📌 Useful Commands:
+docker ps
+docker logs <id>
+docker exec -it <id> bash
+docker stats
+
+
+16. Docker Networking
+docker network create mynetwork
+docker network ls
+docker network inspect mynetwork
+
+
+17. Docker Volumes
+docker volume create myvolume
+docker volume ls
+docker volume inspect myvolume
+
+
+18. Key Concept Summary
+Virtualization → Heavy but isolated
+Containers → Lightweight and fast
+Namespaces → Isolation
+cgroups → Resource control
+Images → Blueprint
+Registry → Storage
+Docker → Tool for containers
+
+
+ 19. Important Interview Points
+Difference: VM vs Container
+Role of Docker in DevOps
+What are namespaces & cgroups
+Image vs Container
+Public vs Private registry
+
+
+ 20. Real-Life Understanding
+Image → Blueprint
+Container → Running instance
+Runtime → Engine
+Registry → Storage center
