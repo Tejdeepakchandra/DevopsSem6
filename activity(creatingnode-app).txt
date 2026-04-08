@@ -1,0 +1,117 @@
+PS C:\Users\tejde> cd node-app
+PS C:\Users\tejde\node-app> notepad app.js
+PS C:\Users\tejde\node-app> notepad package.json
+PS C:\Users\tejde\node-app> notepad Dockerfile.txt
+PS C:\Users\tejde\node-app> dir
+
+
+    Directory: C:\Users\tejde\node-app
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        08-04-2026     13:16              0 app.js
+-a----        08-04-2026     13:17              0 Dockerfile.txt
+-a----        08-04-2026     13:17              0 package.json
+
+
+PS C:\Users\tejde\node-app> Dockerfile- Rename-Item Dockerfile.txt Dockerfile
+Dockerfile- : The term 'Dockerfile-' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling 
+of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:1
++ Dockerfile- Rename-Item Dockerfile.txt Dockerfile
++ ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (Dockerfile-:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+PS C:\Users\tejde\node-app>  Rename-Item Dockerfile.txt Dockerfile
+PS C:\Users\tejde\node-app> dir
+
+
+    Directory: C:\Users\tejde\node-app
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        08-04-2026     13:16              0 app.js
+-a----        08-04-2026     13:17              0 Dockerfile
+-a----        08-04-2026     13:17              0 package.json
+
+
+PS C:\Users\tejde\node-app> docker build -t node-app
+ERROR: docker: 'docker buildx build' requires 1 argument
+
+Usage:  docker buildx build [OPTIONS] PATH | URL | -
+
+Run 'docker buildx build --help' for more information
+PS C:\Users\tejde\node-app> docker build -t node-app .
+[+] Building 0.2s (1/1) FINISHED                                                                                           docker:desktop-linux
+ => [internal] load build definition from Dockerfile                                                                                       0.1s
+ => => transferring dockerfile: 31B                                                                                                        0.0s 
+ERROR: failed to build: failed to solve: the Dockerfile cannot be empty
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/qyyo2ru262i1uunj881rh0cr1
+PS C:\Users\tejde\node-app> dir
+
+
+    Directory: C:\Users\tejde\node-app
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        08-04-2026     13:16              0 app.js
+-a----        08-04-2026     13:17              0 Dockerfile
+-a----        08-04-2026     13:17              0 package.json
+
+
+PS C:\Users\tejde\node-app> docker build -t node-app .
+[+] Building 0.1s (1/1) FINISHED                                                                                           docker:desktop-linux
+ => [internal] load build definition from Dockerfile                                                                                       0.0s
+ => => transferring dockerfile: 31B                                                                                                        0.0s 
+ERROR: failed to build: failed to solve: the Dockerfile cannot be empty
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/deonmlsg3r6ty5kyubh19go55
+PS C:\Users\tejde\node-app> docker build -t node-app .
+[+] Building 0.1s (1/1) FINISHED                                                                                           docker:desktop-linux
+ => [internal] load build definition from Dockerfile                                                                                       0.0s
+ => => transferring dockerfile: 31B                                                                                                        0.0s 
+ERROR: failed to build: failed to solve: the Dockerfile cannot be empty
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/juxmz82pt5cpugy0zl9y88hhe
+PS C:\Users\tejde\node-app> ls
+
+
+    Directory: C:\Users\tejde\node-app
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        08-04-2026     13:16              0 app.js
+-a----        08-04-2026     13:17              0 Dockerfile
+-a----        08-04-2026     13:17              0 package.json
+
+
+PS C:\Users\tejde\node-app> docker build -t node-app .
+[+] Building 39.2s (11/11) FINISHED                                                                                        docker:desktop-linux
+ => [internal] load build definition from Dockerfile                                                                                       0.0s
+ => => transferring dockerfile: 160B                                                                                                       0.0s 
+ => [internal] load metadata for docker.io/library/node:18-alpine                                                                          6.0s 
+ => [auth] library/node:pull token for registry-1.docker.io                                                                                0.0s
+ => [internal] load .dockerignore                                                                                                          0.0s
+ => => transferring context: 2B                                                                                                            0.0s 
+ => [1/5] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e                   24.4s 
+ => => resolve docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e                    0.0s 
+ => => sha256:25ff2da83641908f65c3a74d80409d6b1b62ccfaab220b9ea70b80df5a2e0549 446B / 446B                                                 0.8s 
+ => => sha256:dd71dde834b5c203d162902e6b8994cb2309ae049a0eabc4efea161b2b5a3d0e 40.01MB / 40.01MB                                          22.6s
+ => => sha256:1e5a4c89cee5c0826c540ab06d4b6b491c96eda01837f430bd47f0d26702d6e3 1.26MB / 1.26MB                                             5.1s 
+ => exporting to image                                                                                                                     1.3s 
+ => => exporting layers                                                                                                                    0.5s 
+ => => exporting manifest sha256:d90095cedc2b65a83d13efa7df00469b2d0f9f41a11a8072e73ebdf8256db5dc                                          0.0s 
+ => => exporting config sha256:c777574ba1ccc50044f345dc889c9a7528fd21c5b62f513aa34f11134be312ca                                            0.0s 
+ => => exporting attestation manifest sha256:434a7ddc49168234cd7f2de3bba91fa5dfb0f1e96b9b6f1fa7d2d6e608e62ba7                              0.0s 
+ => => exporting manifest list sha256:c88b1cb82163b7e6c7c35f4c2498a53e39dd5ba91a713570598a6d1b7cb65c64                                     0.0s 
+ => => naming to docker.io/library/node-app:latest                                                                                         0.0s 
+ => => unpacking to docker.io/library/node-app:latest                                                                                      0.7s 
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/jyk4z76fbjnmsay6cng1ljicd
+PS C:\Users\tejde\node-app>
