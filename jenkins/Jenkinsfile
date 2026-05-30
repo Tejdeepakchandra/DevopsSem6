@@ -1,0 +1,180 @@
+// Jenkinsfile - Declarative Pipeline Example
+// This file demonstrates a complete CI/CD pipeline for a Maven + Docker project
+
+pipeline {
+    agent any
+
+    // ===== Tools Configuration =====
+    tools {
+        maven 'Maven-3.9'      // Configured in Global Tool Configuration
+        jdk 'JDK-17'           // Configured in Global Tool Configuration
+    }
+
+    // ===== Environment Variables =====
+    environment {
+        APP_NAME    = 'devops-sample-app'
+        VERSION     = '1.0.0'
+        DOCKER_REGISTRY = 'ghcr.io'
+        IMAGE_NAME  = "${DOCKER_REGISTRY}/tejdeepakchandra/${APP_NAME}"
+    }
+
+    // ===== Pipeline Parameters =====
+    parameters {
+        choice(name: 'ENVIRONMENT', choices: ['dev', 'staging', 'production'], description: 'Target deployment environment')
+        booleanParam(name: 'SKIP_TESTS', defaultValue: false, description: 'Skip running tests')
+        booleanParam(name: 'BUILD_DOCKER', defaultValue: true, description: 'Build Docker image')
+    }
+
+    // ===== Build Triggers =====
+    triggers {
+        pollSCM('H/5 * * * *')    // Poll Git every 5 minutes
+    }
+
+    // ===== Pipeline Stages =====
+    stages {
+
+        // Stage 1: Checkout source code
+        stage('Checkout') {
+            steps {
+                echo "Checking out source code..."
+                checkout scm
+                echo "Branch: ${env.BRANCH_NAME}"
+                echo "Commit: ${env.GIT_COMMIT}"
+            }
+        }
+
+        // Stage 2: Build the project
+        stage('Build') {
+            steps {
+                echo "Building ${APP_NAME} v${VERSION}..."
+                sh 'mvn clean compile -B'
+            }
+        }
+
+        // Stage 3: Run unit tests
+        stage('Test') {
+            when {
+                expression { !params.SKIP_TESTS }
+            }
+            steps {
+                echo "Running unit tests..."
+                sh 'mvn test -B'
+            }
+            post {
+                always {
+                    // Publish JUnit test results
+                    junit allowEmptyResults: true,
+                          testResults: '**/target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        // Stage 4: Package the application
+        stage('Package') {
+            steps {
+                echo "Packaging application..."
+                sh 'mvn package -DskipTests -B'
+                
+                // Archive the JAR artifact
+                archiveArtifacts artifacts: 'target/*.jar',
+                                 fingerprint: true,
+                                 allowEmptyArchive: false
+            }
+        }
+
+        // Stage 5: Code Quality & Coverage
+        stage('Code Quality') {
+            steps {
+                echo "Analyzing code quality..."
+                sh 'mvn verify -DskipTests -B'
+            }
+            post {
+                always {
+                    // Publish JaCoCo coverage report (requires JaCoCo plugin)
+                    jacoco(
+                        execPattern: '**/target/*.exec',
+                        classPattern: '**/target/classes',
+                        sourcePattern: '**/src/main/java'
+                    )
+                }
+            }
+        }
+
+        // Stage 6: Build Docker image
+        stage('Docker Build') {
+            when {
+                allOf {
+                    expression { params.BUILD_DOCKER }
+                    branch 'main'
+                }
+            }
+            steps {
+                echo "Building Docker image..."
+                script {
+                    dockerImage = docker.build("${IMAGE_NAME}:${VERSION}")
+                    dockerImage.tag('latest')
+                }
+            }
+        }
+
+        // Stage 7: Push Docker image to registry
+        stage('Docker Push') {
+            when {
+                allOf {
+                    expression { params.BUILD_DOCKER }
+                    branch 'main'
+                }
+            }
+            steps {
+                echo "Pushing Docker image to ${DOCKER_REGISTRY}..."
+                script {
+                    docker.withRegistry("https://${DOCKER_REGISTRY}", 'ghcr-credentials') {
+                        dockerImage.push("${VERSION}")
+                        dockerImage.push('latest')
+                    }
+                }
+            }
+        }
+
+        // Stage 8: Deploy
+        stage('Deploy') {
+            when {
+                branch 'main'
+            }
+            steps {
+                echo "Deploying to ${params.ENVIRONMENT}..."
+                script {
+                    if (params.ENVIRONMENT == 'production') {
+                        // Manual approval for production
+                        input message: 'Deploy to production?', ok: 'Deploy'
+                    }
+                }
+                echo "Deployment to ${params.ENVIRONMENT} complete!"
+                // In real scenario:
+                // sshagent(['deploy-ssh-key']) {
+                //     sh "ssh user@server 'docker pull ${IMAGE_NAME}:latest && docker-compose up -d'"
+                // }
+            }
+        }
+    }
+
+    // ===== Post Actions =====
+    post {
+        success {
+            echo "Pipeline completed successfully!"
+            // Notify on success
+            // slackSend(channel: '#devops', message: "Build #${BUILD_NUMBER} PASSED")
+        }
+        failure {
+            echo "Pipeline failed!"
+            // Notify on failure
+            // mail to: 'team@example.com',
+            //      subject: "FAILED: ${JOB_NAME} #${BUILD_NUMBER}",
+            //      body: "Check: ${BUILD_URL}"
+        }
+        always {
+            // Clean up workspace
+            cleanWs()
+        }
+    }
+}
